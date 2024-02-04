@@ -1,7 +1,7 @@
 name: Daily healthcheck
 on:
     schedule:
-        - cron: '30 16 * * *'
+        - cron: '33 16 * * *'
 jobs:
     test_schedule:
         runs-on: ubuntu-latest
@@ -18,4 +18,12 @@ jobs:
                 # Delay between retries
                 retry-delay: 5s # Optional, only applicable to max-attempts > 1
                 # Retry all errors, including 404. This option might trigger curl upgrade.
+            - name: Healthcheck Failure
+              uses: rjstone/discord-webhook-notify@v1
+              if: ${{ failure() }}
+              with:
+                severity: error
+                webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+                description: on https://pokedex.fly.dev/
+                text: Healthcheck failed
 
